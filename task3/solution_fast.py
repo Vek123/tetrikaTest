@@ -3,29 +3,40 @@ def appearance(intervals: dict[str, list[int]]) -> int:
     pupil = intervals["pupil"]
     tutor = intervals["tutor"]
     all_time = 0
-    diff_slices = []
-    for tutor_left in range(0, len(tutor)-1, 2):
-        for pupil_left in range(0, len(pupil)-1, 2):
-            if pupil[pupil_left] > tutor[tutor_left+1]:
+    left_pupil = 0
+    left_tutor = 0
+    max_pupil_right = 0
+    while left_pupil < len(pupil) - 1 and left_tutor < len(tutor) - 1:
+        if pupil[left_pupil+1] < max_pupil_right:
+            pupil.pop(left_pupil)
+            pupil.pop(left_pupil)
+            continue
+        elif pupil[left_pupil] < max_pupil_right and pupil[left_pupil+1] != max_pupil_right:
+            pupil[left_pupil] = max_pupil_right
+        max_pupil_right = pupil[left_pupil+1]
+        right_edge = min(lesson[1], pupil[left_pupil+1], tutor[left_tutor+1])
+        left_edge = max(lesson[0], pupil[left_pupil], tutor[left_tutor])
+        diff = right_edge - left_edge
+        if diff < 0:
+            if pupil[left_pupil+1] <= lesson[0]:
+                left_pupil += 2
+                continue
+            if tutor[left_tutor+1] <= lesson[0]:
+                left_tutor += 2
+                continue
+            if pupil[left_tutor] >= lesson[1] or pupil[left_tutor] >= lesson[1]:
                 break
-            if pupil[pupil_left+1] < tutor[tutor_left]:
-                continue
-            curr_slice = [max(lesson[0], pupil[pupil_left], tutor[tutor_left]), min(lesson[1], tutor[tutor_left+1], pupil[pupil_left+1])]
-            dl = max(0, curr_slice[1] - curr_slice[0])
-            if dl > 0:
-                diff_slices.append(curr_slice)
-    sl_left = 1
-    all_time += diff_slices[0][1] - diff_slices[0][0]
-    while sl_left < len(diff_slices):
-        if diff_slices[sl_left-1][1] > diff_slices[sl_left][0]:
-            if diff_slices[sl_left-1][1] > diff_slices[sl_left][1]:
-                diff_slices.pop(sl_left)
-                continue
+            if pupil[left_pupil] > tutor[left_tutor+1]:
+                left_tutor += 2
             else:
-                diff_slices[sl_left][0] = diff_slices[sl_left-1][1]
-        all_time += diff_slices[sl_left][1] - diff_slices[sl_left][0]
-        sl_left += 1
-    print(diff_slices)
+                left_pupil += 2
+            continue
+        all_time += diff
+        if right_edge == pupil[left_pupil+1]:
+            left_pupil += 2
+        else:
+            left_tutor += 2
+
     return all_time
 
 tests = [
