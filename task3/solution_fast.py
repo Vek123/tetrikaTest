@@ -24,7 +24,7 @@ def appearance(intervals: dict[str, list[int]]) -> int:
             if tutor[left_tutor+1] <= lesson[0]:
                 left_tutor += 2
                 continue
-            if pupil[left_tutor] >= lesson[1] or pupil[left_tutor] >= lesson[1]:
+            if pupil[left_pupil] >= lesson[1] or tutor[left_tutor] >= lesson[1]:
                 break
             if pupil[left_pupil] > tutor[left_tutor+1]:
                 left_tutor += 2
